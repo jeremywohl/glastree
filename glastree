@@ -6,14 +6,20 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.4 2001/11/26 10:12:27 jeremyw Exp $
+#  $Id: glastree,v 1.5 2001/11/26 10:38:07 jeremyw Exp $
 #
+
+require 5.002;
 
 use English;
 use DirHandle;
 use File::Copy;
 use File::stat;
 use Date::Calc qw (Today Add_Delta_Days);
+use strict;
+
+# some globals
+my ($source, $target, $today, $yesterday);
 
 main ();
 
@@ -51,6 +57,7 @@ sub recurse
     my ($cwd) = @_;
     my ($dir, @list, @dirs, @files);
     my ($file, $num);
+    my ($now_stat, $yes_stat);
 
 
     $dir   = new DirHandle ($cwd);
