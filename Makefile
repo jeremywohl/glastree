@@ -4,7 +4,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.4 2002/02/06 01:14:28 jeremyw Exp $
+#  $Id: Makefile,v 1.5 2002/02/11 19:46:42 jeremyw Exp $
 #
 
 INSTALL  = install
@@ -16,8 +16,8 @@ all:
 	@echo Available targets: check, test, install.
 
 check:
-	perl -wc glastree
-	perl -wc glastreeprune
+	@perl -wc glastree
+	@perl -wc glastreeprune
 
 test:
 	@echo Test not implemented yet.
