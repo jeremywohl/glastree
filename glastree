@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.13 2002/01/29 05:48:41 jeremyw Exp $
+#  $Id: glastree,v 1.14 2002/01/29 14:39:52 jeremyw Exp $
 #
 
 require 5.002;
@@ -23,7 +23,7 @@ use strict;
 # some globals & option vars
 use vars qw/ $source $target $today $yesterday @prunedirs /;
 
-use vars qw/ $opt_prunedays $opt_usehourminute $opt_today $opt_yesterday /;
+use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
 my $version = "glastree v0.52 alpha, http://igmus.org/code\n";
