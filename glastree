@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.5 2001/11/26 10:38:07 jeremyw Exp $
+#  $Id: glastree,v 1.6 2001/11/26 10:50:03 jeremyw Exp $
 #
 
 require 5.002;
@@ -54,7 +54,7 @@ sub main
 
 sub recurse
 {
-    my ($cwd) = @_;
+    my ($cwd) = shift;
     my ($dir, @list, @dirs, @files);
     my ($file, $num);
     my ($now_stat, $yes_stat);
@@ -120,7 +120,7 @@ sub recurse
 #
 sub rmkdir ($path)
 {
-    my ($path) = @_;
+    my ($path) = shift;
     my ($piece, $newdir);
 
     foreach $piece (split '/', $path) {
