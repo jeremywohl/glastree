@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+#
+# glastree -- build dated, versioned tree of sourcedir, usually per diem
+#
+#  Jeremy Wohl (http://igmus.org/code)
+#  Public domain; no warranty, no responsibility, etc.
+#
+#  $Id: glastree,v 1.1 2001/11/25 22:03:41 jeremyw Exp $
+#
+
+use English;
+use DirHandle;
+
+main ();
+
+sub main
+{
+    if (not defined @ARGV or scalar @ARGV < 2)
+    {
+	print STDERR "usage: glastree [-d n] sourcedir backupdir\n\n";
+	print STDERR "  -d n        Prune days (or directories) more than n back\n";
+	#print STDERR "  -i          Use hour/minute in directory names, suppress per diem\n";
+	exit 1;
+    }
+
+    $source = $ARGV [0];
+    $target = $ARGV [1];
+
+    $today     = qx{date +%Y/%m/%d};
+    $yesterday = qx{date +%Y/%m/%d --date='yesterday'};
+
+    die "fatal: $target does not exist"                       if not -e "$target";
+    die "fatal: $source does not exist"                       if not -e "$source";
+    die "fatal: $target/$today already exists"                if     -e "$target/$today";
+    die "fatal: you do not have read permission in $source"   if not -r "$source";
+    die "fatal: you do not have write permission in $target"  if not -w "$target";
+
+    recurse ($source);
+}
+
+
+sub recurse
+{
+    my ($cwd) = @_;
+    my ($dir, @list, @dirs, @files);
+    my ($file, $num);
+
+
+    $dir   = new DirHandle ($cwd);
+    @list  = $dir->read;
+    @dirs  = grep { /^[^\.]/ && -d "$cwd/$_" } @list;
+    @files = grep {             -f "$cwd/$_" } @list;
+    undef $dir;
+
+    foreach (@dirs) { recurse ("$cwd/$_"); }
+
+    # for all files in the source tree
+    #   if the file is a link, make the link
+    #   else if the file is a dir, make the dir
+    #   else if the file is a normal file
+    #     if yesterday does not exist or today is newer, copy the file
+    #     else hard link the file to yesterday
+    #   else: no logic to handle file type
+    # end
+
+    foreach $file (@files)
+    {
+	stat "$cwd/$file";
+
+	if (-l _) {
+	    symlink ("$target/$today/$cwd/$file", readlink ("$cwd/$file"));
+	}
+
+	elsif (-d _) {
+	    mkdir ("$target/$today/$cwd/$file");
+	    # set perms/ownership
+	}
+
+	elsif (-f _) {
+	    if (-x "$target/$yesterday/$cwd/$file") { }
+	}	    
+
+	else {
+	    print STDERR "warning: no logic to handle $cwd/$file; skipping\n";
+	}
+    }
+}

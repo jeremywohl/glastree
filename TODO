@@ -1,0 +1,5 @@
+Reduce system calls
+Depth-first is easy, but inefficient
+
+Use delta logic hidden behind a real fs
+Consider problems with long-term WORM storage
