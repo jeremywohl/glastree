@@ -1,3 +1,8 @@
+1.03 stable:
+2003.Jan.26  Remove superfluous prunedays from GetOptions list (thanks DL)
+2003.Jan.26  Fix: source and backup do _not_ need to be on the same fs for
+             compression -- graph yanked from glastree.1 (thanks DL)
+
 1.02 stable:
 2002.Dec.15  Version strings again -- blast!
 

@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.23 2002/12/15 20:04:17 jeremyw Exp $
+#  $Id: glastree,v 1.24 2003/01/27 00:26:26 jeremyw Exp $
 #
 
 require 5.002;
@@ -26,7 +26,7 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
-my $version = "glastree v1.02 stable, http://igmus.org/code/\n";
+my $version = "glastree v1.03 stable, http://igmus.org/code/\n";
 
 main ();
 
@@ -36,7 +36,7 @@ sub main
     # handle options
     #
 
-    GetOptions ('prunedays=i', 'today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
+    GetOptions ('today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
     
     if ($opt_version)  { print STDERR $version; exit 1; }
 
