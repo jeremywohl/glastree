@@ -4,8 +4,13 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.1 2001/11/28 07:19:21 jeremyw Exp $
+#  $Id: Makefile,v 1.2 2001/11/28 08:07:22 jeremyw Exp $
 #
+
+INSTALL  = install
+INSTROOT = /usr/local
+INSTBIN  = bin
+INSTMAN  = man
 
 all:
 	@echo Available targets: check, test, install.
@@ -22,4 +27,5 @@ install:
 	if ($$@) { print "\nThis program requires the Date::Calc module.\n"; exit 1; } \
 	print " OK\n"; '
 
-	@echo Install not implemented yet.
+	$(INSTALL) --directory $(INSTROOT)/$(INSTBIN) $(INSTROOT/($INSTMAN)
+	$(INSTALL) --preserve-timestamps --mode=0755 glastree $(INSTROOT)/$(INSTBIN)
