@@ -4,7 +4,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.2 2001/11/28 08:07:22 jeremyw Exp $
+#  $Id: Makefile,v 1.3 2002/01/28 19:08:29 jeremyw Exp $
 #
 
 INSTALL  = install
@@ -17,6 +17,7 @@ all:
 
 check:
 	perl -wc glastree
+	perl -wc glastreeprune
 
 test:
 	@echo Test not implemented yet.
@@ -29,3 +30,4 @@ install:
 
 	$(INSTALL) --directory $(INSTROOT)/$(INSTBIN) $(INSTROOT/($INSTMAN)
 	$(INSTALL) --preserve-timestamps --mode=0755 glastree $(INSTROOT)/$(INSTBIN)
+	$(INSTALL) --preserve-timestamps --mode=0755 glastreeprune $(INSTROOT)/$(INSTBIN)

@@ -1,5 +1,8 @@
 0.51 alpha:
-20011128  File copies/mkdirs observe ownership/permissions
-20011126  Dates retreived from Date::Calc instead of /bin/date
+2002.Jan.28  Use YYYYMM/DD vs YYYY/MM/DD
+2002.Jan.28  Move pruning to glastreeprune | xargs rm
+2001.Dec.01  Options for manually setting today & yesterday
+2001.Nov.28  File copies/mkdirs observe ownership/permissions
+2001.Nov.26  Dates retrieved from Date::Calc instead of /bin/date
 
-20011125  --genesis--
+2001.Nov.25  --genesis--

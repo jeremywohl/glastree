@@ -1,14 +1,11 @@
 Critical:
 '.' & '..' path segments
 Safety checks: is target some child (or parent?) of source?
-Build tests
 
-Features:
-Max days/dirs to backupdir
-Option to use YYYY/MM/DD/HH/MM
-
-Release:
+Near-term:
 Reduce system calls
+Put tests in the public release
+Option to use YYYY/MM/DD/HH/MM
 
 Long-term:
 Use delta logic hidden behind a real fs

@@ -3,37 +3,44 @@ glastree 0.51 alpha
 Overview
 
   Builds live backup trees, with branches for each day.  Users directly browse
-  the past to revert to older documents or retrieve lost files.
+  the past to recover older documents or retrieve lost files.
 
   Hard links serve to compress out unchanged files, while modified ones are
-  copied verbatim.  Total days kept can be limited.
+  copied verbatim.  A prune utility effects a constant, sliding window.
 
   Satoru Takabayashi has writen a similar program, in Ruby,
   "pdumpfs":http://namazu.org/~satoru/pdumpfs.
 
 Installation
 
-  Edit install variables in Makefile, then 'make install'. ::
+  Edit install variables in Makefile, then 'make install' ::
 
     # su
     # make install
 
 Examples
 
-  Backup home directory to /vol02/backup::
+  Backup home directory to /vol02/backup ::
 
     # mkdir /vol02/backup
     # glastree ~ /vol02/backup
 
-  Backup my Mail files to /backup/<me>/Mail (a directory I own), everyday
-  at 4am, keeping last 35 days::
+  You will subsequently see directories such as ::
 
-    0 4 * * *  glastree --prunedays=35 Mail /backup/<me>/Mail'
+     /vol02/backup/200105/26/blah/blah
+     /vol02/backup/200105/27/blah/blah
+     ...
 
-  As root, backup /home; user trees will be self-owned::
+  Backup my Mail files to /backup/joe/Mail (a directory I own), everyday
+  at 4am, keeping last 35 days ::
+
+    0 4 * * *  glastree Mail /backup/joe/Mail ; \
+               glasstreeprune --days=35 /backup/joe/Mail | xargs -- rm -fr
+
+  As root, backup /home; user trees will be self-owned ::
 
     # su
-    # glastree /home /backup/home
+    # glastree /home /backup
 
 License
 
