@@ -1,0 +1,105 @@
+#!/usr/bin/perl
+
+#
+# glastreeprune -- list glastree directories outside our window
+#
+#  Jeremy Wohl (http://igmus.org/code)
+#  Public domain; no warranty, no responsibility, etc.
+#
+#  $Id: glastreeprune,v 1.1 2002/01/28 18:48:11 jeremyw Exp $
+#
+
+require 5.002;
+
+use English;
+use Getopt::Long;
+use DirHandle;
+use Cwd qw (getcwd);
+use Date::Calc qw (Today Add_Delta_Days Delta_Days);
+use strict;
+
+use vars qw/ @boundary @prunedirs %pruneym $KEEP $TANK /;
+
+$KEEP = 1;
+$TANK = 0;
+
+use vars qw/ $opt_days /;
+use vars qw/ $opt_help /;
+
+main ();
+
+sub main
+{
+    my ($target, $prunedays);
+
+    #
+    # handle options
+    #
+
+    GetOptions ('days=i', 'help');
+    
+    if ($opt_help or not defined @ARGV or scalar @ARGV != 1)
+    {
+	print STDERR "usage: glastreeprune [options] backupdir\n\n";
+	print STDERR "options:\n";
+	print STDERR "  --days=n             Keep only last n days (from today); default = 30\n";
+	#print STDERR "  --recentdays=n       Keep only most recent n days\n";
+	print STDERR "  --help               Display this message and exit\n";
+	exit 1;
+    }
+
+    $target = $ARGV [0];
+
+    if (not defined $opt_days) {
+	$prunedays = 30;
+    } else {
+	$prunedays = $opt_days;
+    }
+
+    #
+    # figure marcation
+    #
+
+    @boundary = Add_Delta_Days (Today (), -$prunedays);
+
+    #
+    # go
+    #
+
+    prunerecurse ("$target", 0);
+    foreach (@prunedirs) { print "$_\n"; }
+
+    foreach (keys %pruneym) { print "$target/$_\n" if $pruneym {$_} == $TANK; }
+}
+
+
+sub prunerecurse ($cwd, $level)
+{
+    my ($cwd, $level) = @_;
+    my ($dir, @list, @dirs);
+
+
+    return if ($dir = new DirHandle ($cwd)) == undef;
+
+    @list  = $dir->read;
+    @dirs  = grep { /^[^\.]/ && -d "$cwd/$_" } @list;
+    undef $dir;
+
+    if ($level == 1) {
+	foreach (@dirs) {
+	    next if "$cwd/$_" !~ m!(\d\d\d\d)(\d\d)/(\d\d)$!;
+
+	    if (Delta_Days (@boundary, $1, $2, $3) > 0) {
+		$pruneym {$1 . $2} = $KEEP;
+		next;
+	    }
+
+	    push (@prunedirs, "$cwd/$_");
+
+	    $pruneym {$1 . $2} = $TANK if not defined $pruneym {$1 . $2};
+	}
+	return;
+    }
+
+    foreach (@dirs)  { prunerecurse ("$cwd/$_", $level + 1); }
+}
