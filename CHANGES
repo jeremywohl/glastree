@@ -1,5 +1,11 @@
+0.55 beta:
+2002.Feb.11  Search past 60 days for a diff dir, not just yesterday
+2002.Feb.11  Fix: treating symlinks to dirs as dirs, not symlinks (thanks JL)
+2002.Feb.11  Fix: ignoring dot directories (thanks JL & HR)
+
 0.54 beta:
-2002.Feb.09  Fix: local directory targets did nothing
+2002.Feb.09  Fix: local directory targets do nothing (thanks SH)
+2002.Feb.09  Clean target path before recursing
 
 0.53 beta:
 2002.Feb.05  Moved to beta level
