@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.6 2001/11/26 10:50:03 jeremyw Exp $
+#  $Id: glastree,v 1.7 2001/11/27 07:48:31 jeremyw Exp $
 #
 
 require 5.002;
@@ -41,6 +41,8 @@ sub main
 
     die "fatal: $target does not exist"                       if not -e "$target";
     die "fatal: $source does not exist"                       if not -e "$source";
+    die "fatal: $target is not a directory"                   if not -d "$target";
+    die "fatal: $source is not a directory"                   if not -d "$source";
     die "fatal: $target/$today already exists"                if     -e "$target/$today";
     die "fatal: you do not have read permission in $source"   if not -r "$source";
     die "fatal: you do not have write permission in $target"  if not -w "$target";
@@ -79,29 +81,35 @@ sub recurse
 
     foreach $file (@files)
     {
-	if (-l "$cwd/$file") {
-	    symlink (readlink ("$cwd/$file"), "$target/$today/$cwd/$file");
+	my $new_path       = "$cwd/$file";
+	my $today_path     = "$target/$today/$cwd/$file";
+	my $yesterday_path = "$target/$yesterday/$cwd/$file";
+
+	if (-l $new_path) {
+	    symlink (readlink ($new_path), $today_path);
 	}
 
-	elsif (-d "$cwd/$file") {
-	    rmkdir ("$target/$today/$cwd/$file");
+	elsif (-d $new_path) {
+	    rmkdir ($today_path);
 	    # set perms/ownership
 	}
 
-	elsif (-f "$cwd/$file") {
-	    $now_stat = stat "$cwd/$file";
-	    $yes_stat = stat "$target/$yesterday/$cwd/$file";
+	elsif (-f $new_path) {
+	    my $new_stat       = stat $new_path;
+	    my $yesterday_stat = stat $yesterday_path;
 
-	    if (not defined ($yes_stat)
-		or $now_stat->mtime != $yes_stat->mtime
-		or $now_stat->size  != $yes_stat->size)
+	    if (not defined ($yesterday_stat)
+		or $new_stat->mtime != $yesterday_stat->mtime
+		or $new_stat->size  != $yesterday_stat->size)
 	    {
-		copy ("$cwd/$file", "$target/$today/$cwd/$file");
-		utime $now_stat->mtime, $now_stat->mtime, "$target/$today/$cwd/$file";
+		copy ($new_path, $today_path);
+		chown ($new_stat->uid, $new_stat->gid, $today_path) if $EUID == 0;
+		chmod ($new_stat->mode, $today_path);
+		utime ($new_stat->mtime, $new_stat->mtime, $today_path);
 	    }
 	    else
 	    {
-		link ("$target/$yesterday/$cwd/$file", "$target/$today/$cwd/$file");
+		link ($yesterday_path, $today_path);
 	    }
 	}	    
 
