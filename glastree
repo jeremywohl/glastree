@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.15 2002/02/06 14:57:59 jeremyw Exp $
+#  $Id: glastree,v 1.16 2002/02/09 18:18:05 jeremyw Exp $
 #
 
 require 5.002;
@@ -91,7 +91,7 @@ sub main
     # get to it
     #
 
-    rmkdir ("$target/$today");
+    rmkdir (cleanpath ("$target/$today"));
 
     recurse ($source);
 }
@@ -210,9 +210,23 @@ sub rmkdir ($path)
     my ($path) = shift;
     my ($piece, $newdir);
 
+    $newdir = "/" if $path =~ m!^/!;
+
     foreach $piece (split '/', $path) {
 	next if $piece eq "";
-	$newdir .= "/" . $piece;
+	$newdir .= $piece . "/";
 	mkdir $newdir, 0700 if not -e $newdir;
     }
+}
+
+
+sub cleanpath ($path)
+{
+    my ($path) = shift;
+
+    $path =~ s!^\./!!g;
+    $path =~ s!([^\.])\./!\1!g;
+    $path =~ s!//!/!g;
+
+    return $path;
 }
