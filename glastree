@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.7 2001/11/27 07:48:31 jeremyw Exp $
+#  $Id: glastree,v 1.8 2001/11/27 08:00:58 jeremyw Exp $
 #
 
 require 5.002;
@@ -39,13 +39,12 @@ sub main
     $today     = sprintf "%4d/%02d/%02d", Today ();
     $yesterday = sprintf "%4d/%02d/%02d", Add_Delta_Days (Today (), -1);
 
-    die "fatal: $target does not exist"                       if not -e "$target";
-    die "fatal: $source does not exist"                       if not -e "$source";
-    die "fatal: $target is not a directory"                   if not -d "$target";
-    die "fatal: $source is not a directory"                   if not -d "$source";
+    die "fatal: $target or $source does not exist"            if not -e $target or not -e $source;
+    die "fatal: $target or $source is not a directory"        if not -d $target or not -d $source;
+    die "fatal: $source is not a directory"                   if not -d $source;
     die "fatal: $target/$today already exists"                if     -e "$target/$today";
-    die "fatal: you do not have read permission in $source"   if not -r "$source";
-    die "fatal: you do not have write permission in $target"  if not -w "$target";
+    die "fatal: you do not have read permission in $source"   if not -r $source;
+    die "fatal: you do not have write permission in $target"  if not -w $target;
     die "fatal: backupdir is the same as sourcedir"           if $target eq $source;
 
     rmkdir ("$target/$today");
