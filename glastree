@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.16 2002/02/09 18:18:05 jeremyw Exp $
+#  $Id: glastree,v 1.17 2002/02/11 21:55:15 jeremyw Exp $
 #
 
 require 5.002;
@@ -26,7 +26,7 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
-my $version = "glastree v0.53 beta, http://igmus.org/code\n";
+my $version = "glastree v0.55 beta, http://igmus.org/code\n";
 
 main ();
 
@@ -36,7 +36,7 @@ sub main
     # handle options
     #
 
-    GetOptions ('prunedays=i', 'version', 'help'); #, 'usehourminute!');
+    GetOptions ('prunedays=i', 'today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
     
     if ($opt_version)  { print STDERR $version; exit 1; }
 
@@ -65,7 +65,7 @@ sub main
     }
 
     if (not defined $opt_yesterday) {
-	$yesterday = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -1);
+	$yesterday = findyesterday ($target);
     } else {
 	$yesterday = $opt_yesterday;
 
@@ -110,8 +110,8 @@ sub recurse
     return if ($dir = new DirHandle ($cwd)) == undef;
 
     @list  = $dir->read;
-    @dirs  = grep { /^[^\.]/ && -d "$cwd/$_" } @list;
-    @files = grep {             -f "$cwd/$_" } @list;
+    @dirs  = grep { -d "$cwd/$_" and not -l "$cwd/$_" and $_ ne '.' and $_ ne '..' } @list;
+    @files = grep { -f "$cwd/$_" or      -l "$cwd/$_" } @list;
     undef $dir;
 
     # for all files in the source tree
@@ -220,12 +220,37 @@ sub rmkdir ($path)
 }
 
 
+#
+# Match most recent backup directory in the past sixty days, or yesterday if none
+#
+#
+sub findyesterday ($target)
+{
+    my ($yesterday, $span, $testdir);
+
+
+    $span = 1;
+
+    $yesterday = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -1);
+
+    while ($span < 60)
+    {
+	$testdir = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -$span);
+
+	if (-d "$target/$testdir")  { $yesterday = $testdir;  last; }
+
+	$span++;
+    }
+
+    return $yesterday;
+}
+
 sub cleanpath ($path)
 {
     my ($path) = shift;
 
     $path =~ s!^\./!!g;
-    $path =~ s!([^\.])\./!\1!g;
+    $path =~ s!([^\.])\./!$1!g;
     $path =~ s!//!/!g;
 
     return $path;
