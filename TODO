@@ -1,3 +1,5 @@
+Allow prune to span directories, not days
+
 Reduce system calls
 Option to use YYYYMM/DD/HH/MM
 

@@ -1,3 +1,7 @@
+0.56 beta:
+2002.Feb.19  No longer forbid multiple, same-day backups (thanks AG)
+2002.Feb.16  Modified install for non-GNU platforms (thanks JL)
+
 0.55 beta:
 2002.Feb.12  Manpage updates
 2002.Feb.11  Search past 60 days for a diff dir, not just yesterday (thanks JL)
