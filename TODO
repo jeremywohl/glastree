@@ -1,9 +1,4 @@
-Critical:
-'.' & '..' path segments
-Safety checks: is target some child (or parent?) of source?
-
 Near-term:
-Reduce system calls
 Put tests in the public release
 Option to use YYYYMM/DD/HH/MM
 

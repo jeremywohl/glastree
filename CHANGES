@@ -1,3 +1,6 @@
+0.54 beta:
+2002.Feb.09  Fix: local directory targets did nothing
+
 0.53 beta:
 2002.Feb.05  Moved to beta level
 2002.Feb.05  Added man pages
