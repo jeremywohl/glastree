@@ -1,0 +1,55 @@
+.\" -*-nroff-*-
+.\"
+.\" glastree.1
+.\"
+.\"  Jeremy Wohl (http://igmus.org/code)
+.\"  Public domain; no warranty, no responsibility, etc.
+.\"
+.\"  $Id: glastree.1,v 1.1 2002/02/06 01:14:28 jeremyw Exp $
+.\"
+.TH glastree 1 "February 2002" Unix "User Manuals"
+.SH NAME
+.PP
+glastree \- build live, daily backup trees
+.SH SYNOPSIS
+.PP
+.B glastree
+[options]
+sourcedir
+backupdir
+.SH DESCRIPTION
+.PP
+Builds live backup trees, with branches for each day.  Users directly browse
+the past to recover older documents or retrieve lost files.
+
+Hard links serve to compress out unchanged files, while modified ones are
+copied verbatim.  A prune utility (see glastreeprune) effects a constant, sliding
+window.
+.SH EXAMPLE CRON
+.nf
+# backup ~/Mail everyday at 5am
+0 5 * * *    glastree Mail /backup
+
+# as above, keeping only last 3 days
+0 5 * * *    glastree Mail /backup; glastreeprune --days=3 /backup | xargs -- rm -fr
+.fi
+.SH OPTIONS
+.PP
+.IP "--today=\fIpath\fP"
+Use path instead of today's date (YYYYMM/DD)
+.IP "--yesterday=\fIpath\fP"
+Use path instead of yesterday's date (YYYYMM/DD)
+.IP "--version"
+Display version and exit
+.IP "--help"
+Display help message and exit
+.SH REPORTING BUGS
+Report bugs to <jeremyw-glastree@igmus.org>.
+.SH SEE ALSO
+.PP
+.BR glastreeprune (1)
+.PP
+http://igmus.org/code
+.SH AUTHOR
+.PP
+Jeremy Wohl

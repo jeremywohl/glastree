@@ -1,0 +1,46 @@
+.\" -*-nroff-*-
+.\"
+.\" glastreeprune.1
+.\"
+.\"  Jeremy Wohl (http://igmus.org/code)
+.\"  Public domain; no warranty, no responsibility, etc.
+.\"
+.\"  $Id: glastreeprune.1,v 1.1 2002/02/06 01:14:28 jeremyw Exp $
+.\"
+.TH glastreeprune 1 "February 2002" Unix "User Manuals"
+.SH NAME
+.PP
+glastreeprune \- list old paths in a glastree directory
+.SH SYNOPSIS
+.PP
+.B glastreeprune
+[options]
+backupdir
+.SH DESCRIPTION
+.PP
+Print date paths from a glastree backup directory, one per line, that are
+older than "days".
+
+Combine with xargs & rm to effect a constant, sliding backup window.
+.SH EXAMPLE
+.PP
+.nf
+  # glastreeprune --days=8 /bak | xargs -- rm -fr
+.fi
+.SH OPTIONS
+.PP
+.IP "--days=\fIn\fP"
+Keep only last n days (from today); default is 30
+.IP "--help"
+Display help message and exit
+.SH REPORTING BUGS
+Report bugs to <jeremyw-glastree@igmus.org>.
+.SH SEE ALSO
+.PP
+.BR glastree (1),
+.BR xargs (1)
+.PP
+http://igmus.org/code
+.SH AUTHOR
+.PP
+Jeremy Wohl
