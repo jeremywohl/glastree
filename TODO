@@ -3,6 +3,10 @@ Critical:
 Setting owner/perms
 Safety checks: is target some child (or parent?) of source?
 
+Features:
+Max days/dirs to backupdir
+Option to use YYYY/MM/DD/HH/MM
+
 Release:
 Reduce system calls
 
