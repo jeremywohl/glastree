@@ -5,7 +5,7 @@
 .\"  Jeremy Wohl (http://igmus.org/code)
 .\"  Public domain; no warranty, no responsibility, etc.
 .\"
-.\"  $Id: glastree.1,v 1.3 2002/02/12 19:50:29 jeremyw Exp $
+.\"  $Id: glastree.1,v 1.4 2002/12/15 19:53:52 jeremyw Exp $
 .\"
 .TH glastree 1 "February 2002" Unix "User Manuals"
 .SH NAME
@@ -25,6 +25,11 @@ the past to recover older documents or retrieve lost files.
 Hard links serve to compress out unchanged files, while modified ones are
 copied verbatim.  A prune utility (see glastreeprune) effects a constant, sliding
 window.
+
+You may repeat invocations to one
+.I backupdir
+with different
+.IR sourcedir s.
 
 Intermittent backups will retain compression if runs are not more than
 sixty (60) days apart.
