@@ -1,5 +1,11 @@
-Reduce system calls
-Depth-first is easy, but inefficient
+Critical:
+'.' & '..' path segments
+Setting owner/perms
+Safety checks: is target some child (or parent?) of source?
 
+Release:
+Reduce system calls
+
+Long-term:
 Use delta logic hidden behind a real fs
 Consider problems with long-term WORM storage
