@@ -6,12 +6,13 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.10 2001/11/28 05:32:18 jeremyw Exp $
+#  $Id: glastree,v 1.11 2001/11/28 06:31:07 jeremyw Exp $
 #
 
 require 5.002;
 
 use English;
+use Getopt::Long;
 use DirHandle;
 use File::Copy;
 use File::stat;
@@ -19,17 +20,27 @@ use Date::Calc qw (Today Add_Delta_Days);
 use strict;
 
 # some globals
-my ($source, $target, $today, $yesterday);
+use vars qw/ $source $target $today $yesterday /;
+use vars qw/ $opt_prunedays $opt_usehourminute $opt_help $opt_version /;
+
+my $version = "glastree v0.51 alpha, http://igmus.org/code\n";
 
 main ();
 
 sub main
 {
-    if (not defined @ARGV or scalar @ARGV < 2)
+    GetOptions ('prunedays=i', 'version', 'help'); #, 'usehourminute!');
+    
+    if ($opt_version)  { print STDERR $version; exit 1; }
+
+    if ($opt_help or not defined @ARGV or scalar @ARGV != 2)
     {
-	print STDERR "usage: glastree sourcedir backupdir\n\n";
-	#print STDERR "  -d n        Prune days (or directories) more than n back\n";
-	#print STDERR "  -i          Use hour/minute in directory names, suppress per diem\n";
+	print STDERR "usage: glastree [options] sourcedir backupdir\n\n";
+	print STDERR "options:\n";
+	print STDERR "  --prunedays=n        Keep only n days (or directories) back\n";
+	#print STDERR "  --usehourminute      Use hour/minute in directory names, suppress per diem\n";
+	print STDERR "  --version            Display version and exit\n";
+	print STDERR "  --help               Display this message and exit\n";
 	exit 1;
     }
 
