@@ -6,11 +6,13 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.1 2001/11/25 22:03:41 jeremyw Exp $
+#  $Id: glastree,v 1.2 2001/11/26 04:35:07 jeremyw Exp $
 #
 
 use English;
 use DirHandle;
+use File::Copy;
+use File::stat;
 
 main ();
 
@@ -27,14 +29,20 @@ sub main
     $source = $ARGV [0];
     $target = $ARGV [1];
 
-    $today     = qx{date +%Y/%m/%d};
-    $yesterday = qx{date +%Y/%m/%d --date='yesterday'};
+    #chomp ($today     = qx{date +%Y/%m/%d});
+    #chomp ($yesterday = qx{date +%Y/%m/%d --date='yesterday'});
+
+    $today = "2001/11/25b";
+    $yesterday = "2001/11/25a";
 
     die "fatal: $target does not exist"                       if not -e "$target";
     die "fatal: $source does not exist"                       if not -e "$source";
     die "fatal: $target/$today already exists"                if     -e "$target/$today";
     die "fatal: you do not have read permission in $source"   if not -r "$source";
     die "fatal: you do not have write permission in $target"  if not -w "$target";
+    die "fatal: backupdir is the same as sourcedir"           if $target eq $source;
+
+    rmkdir ("$target/$today");
 
     recurse ($source);
 }
@@ -53,8 +61,6 @@ sub recurse
     @files = grep {             -f "$cwd/$_" } @list;
     undef $dir;
 
-    foreach (@dirs) { recurse ("$cwd/$_"); }
-
     # for all files in the source tree
     #   if the file is a link, make the link
     #   else if the file is a dir, make the dir
@@ -64,25 +70,57 @@ sub recurse
     #   else: no logic to handle file type
     # end
 
+    rmkdir ("$target/$today/$cwd");
+
     foreach $file (@files)
     {
-	stat "$cwd/$file";
-
-	if (-l _) {
-	    symlink ("$target/$today/$cwd/$file", readlink ("$cwd/$file"));
+	if (-l "$cwd/$file") {
+	    symlink (readlink ("$cwd/$file"), "$target/$today/$cwd/$file");
 	}
 
-	elsif (-d _) {
-	    mkdir ("$target/$today/$cwd/$file");
+	elsif (-d "$cwd/$file") {
+	    rmkdir ("$target/$today/$cwd/$file");
 	    # set perms/ownership
 	}
 
-	elsif (-f _) {
-	    if (-x "$target/$yesterday/$cwd/$file") { }
+	elsif (-f "$cwd/$file") {
+	    $now_stat = stat "$cwd/$file";
+	    $yes_stat = stat "$target/$yesterday/$cwd/$file";
+
+	    if (not defined ($yes_stat)
+		or $now_stat->mtime != $yes_stat->mtime
+		or $now_stat->size  != $yes_stat->size)
+	    {
+		copy ("$cwd/$file", "$target/$today/$cwd/$file");
+		utime $now_stat->mtime, $now_stat->mtime, "$target/$today/$cwd/$file";
+	    }
+	    else
+	    {
+		link ("$target/$yesterday/$cwd/$file", "$target/$today/$cwd/$file");
+	    }
 	}	    
 
 	else {
 	    print STDERR "warning: no logic to handle $cwd/$file; skipping\n";
 	}
+    }
+
+    foreach (@dirs) { recurse ("$cwd/$_"); }
+}
+
+
+#
+# Make all segments of $path that do not exist
+#
+#
+sub rmkdir ($path)
+{
+    my ($path) = @_;
+    my ($piece, $newdir);
+
+    foreach $piece (split '/', $path) {
+	next if $piece eq "";
+	$newdir .= "/" . $piece;
+	mkdir $newdir, 0755 if not -e $newdir;
     }
 }
