@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.9 2001/11/27 08:23:29 jeremyw Exp $
+#  $Id: glastree,v 1.10 2001/11/28 05:32:18 jeremyw Exp $
 #
 
 require 5.002;
@@ -41,7 +41,6 @@ sub main
 
     die "fatal: $target or $source does not exist"            if not -e $target or not -e $source;
     die "fatal: $target or $source is not a directory"        if not -d $target or not -d $source;
-    die "fatal: $source is not a directory"                   if not -d $source;
     die "fatal: $target/$today already exists"                if     -e "$target/$today";
     die "fatal: you do not have read permission in $source"   if not -r $source;
     die "fatal: you do not have write permission in $target"  if not -w $target;
@@ -61,7 +60,10 @@ sub recurse
     my ($now_stat, $yes_stat);
 
 
-    $dir   = new DirHandle ($cwd);
+    mkdirstat ("$target/$today", $cwd);
+    
+    return if ($dir = new DirHandle ($cwd)) == undef;
+
     @list  = $dir->read;
     @dirs  = grep { /^[^\.]/ && -d "$cwd/$_" } @list;
     @files = grep {             -f "$cwd/$_" } @list;
@@ -76,8 +78,6 @@ sub recurse
     #   else: no logic to handle file type
     # end
 
-    mkdirstat ("$target/$today/$cwd", stat $cwd);
-    
     foreach $file (@files)
     {
 	my $new_path       = "$cwd/$file";
@@ -113,14 +113,27 @@ sub recurse
 }
 
 
-sub mkdirstat ($path, $stat)
+sub mkdirstat ($prefix, $path)
 {
-    my ($path, $stat) = @_;
+    my ($prefix, $path) = @_;
+    my ($piece, $olddir, $newdir, $fulldir, $stat);
 
-    mkdir $path, 0755;
-    chown ($stat->uid, $stat->gid, $path) if $EUID == 0;
-    chmod ($stat->mode, $path);
-    utime ($stat->mtime, $stat->mtime, $path);
+    foreach $piece (split '/', $path)
+    {
+	$olddir .= ($piece eq "" ? "/" : "") . $piece . "/";
+	$newdir .= $piece . "/";
+	$fulldir = "$prefix/$newdir";
+
+	if (not -e $fulldir)
+	{
+	    $stat = stat $olddir;
+
+	    mkdir $fulldir, 0755;
+	    chown ($stat->uid, $stat->gid, $fulldir) if $EUID == 0;
+	    chmod ($stat->mode, $fulldir);
+	    utime ($stat->mtime, $stat->mtime, $fulldir);
+	}
+    }
 }
 
 
