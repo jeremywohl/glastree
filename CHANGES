@@ -1,3 +1,8 @@
+0.52 alpha:
+2002.Jan.29  Obsolete glastree option 'prunedays' removed
+2002.Jan.29  Fixup today/yesterday params -- YYYYMM/DD format required
+2002.Jan.29  Add check: if $target/YYYYMM exists, check its writability
+
 0.51 alpha:
 2002.Jan.28  Use YYYYMM/DD vs YYYY/MM/DD
 2002.Jan.28  Move pruning to glastreeprune | xargs rm

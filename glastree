@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.12 2002/01/28 19:08:29 jeremyw Exp $
+#  $Id: glastree,v 1.13 2002/01/29 05:48:41 jeremyw Exp $
 #
 
 require 5.002;
@@ -26,7 +26,7 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 use vars qw/ $opt_prunedays $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
-my $version = "glastree v0.51 alpha, http://igmus.org/code\n";
+my $version = "glastree v0.52 alpha, http://igmus.org/code\n";
 
 main ();
 
@@ -44,10 +44,9 @@ sub main
     {
 	print STDERR "usage: glastree [options] sourcedir backupdir\n\n";
 	print STDERR "options:\n";
-	print STDERR "  --prunedays=n        Keep only last n days\n";
 	#print STDERR "  --usehourminute      Use hour/minute in directory names, suppress per diem\n";
-	print STDERR "  --today=path         Use path instead of today's date, usually YYYYMM/DD\n";
-	print STDERR "  --yesterday=path     Use path instead of yesterday's date, usually YYYYMM/DD\n";
+	print STDERR "  --today=path         Use path instead of today's date (YYYYMM/DD)\n";
+	print STDERR "  --yesterday=path     Use path instead of yesterday's date (YYYYMM/DD)\n";
 	print STDERR "  --version            Display version and exit\n";
 	print STDERR "  --help               Display this message and exit\n";
 	exit 1;
@@ -60,24 +59,33 @@ sub main
 	$today = sprintf "%4d%02d/%02d", Today ();
     } else {
 	$today = $opt_today;
+
+	die "fatal: manually set 'today' parameter is not valid YYYYMM/DD"
+	    if $today !~ m!^\d{6}/\d\d$!;
     }
 
     if (not defined $opt_yesterday) {
 	$yesterday = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -1);
     } else {
 	$yesterday = $opt_yesterday;
+
+	die "fatal: manually set 'yesterday' parameter is not valid YYYYMM/DD"
+	    if $yesterday !~ m!^\d{6}/\d\d$!;
     }
 
     #
     # make basic checks
     #
     
-    die "fatal: $target or $source does not exist"            if not -e $target or not -e $source;
-    die "fatal: $target or $source is not a directory"        if not -d $target or not -d $source;
-    die "fatal: $target/$today already exists"                if     -e "$target/$today";
-    die "fatal: you do not have read permission in $source"   if not -r $source;
-    die "fatal: you do not have write permission in $target"  if not -w $target;
-    die "fatal: backupdir is the same as sourcedir"           if $target eq $source;
+    my ($ym) = $today =~ /^(\d{6})/;
+
+    die "fatal: $target or $source does not exist"                if not -e $target or not -e $source;
+    die "fatal: $target or $source is not a directory"            if not -d $target or not -d $source;
+    die "fatal: $target/$today already exists"                    if     -e "$target/$today";
+    die "fatal: you do not have read permission in $source"       if not -r $source;
+    die "fatal: you do not have write permission in $target"      if not -w $target;
+    die "fatal: you do not have write permission in $target/$ym"  if     -e "$target/$ym" and not -w "$target/$ym";
+    die "fatal: backupdir is the same as sourcedir"               if $target eq $source;
 
     #
     # get to it
