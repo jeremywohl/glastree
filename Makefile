@@ -4,7 +4,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.6 2002/02/20 05:38:13 jeremyw Exp $
+#  $Id: Makefile,v 1.7 2002/02/20 05:43:20 jeremyw Exp $
 #
 
 INSTALL  = install
@@ -29,7 +29,7 @@ install:
 	print " OK\n"; '
 
 	$(INSTALL) -d $(INSTROOT)/$(INSTBIN)
-	$(INSTALL) -d  $(INSTROOT/($INSTMAN)
+	$(INSTALL) -d $(INSTROOT)/$(INSTMAN)
 	$(INSTALL) -m 0755 glastree $(INSTROOT)/$(INSTBIN)
 	$(INSTALL) -m 0755 glastreeprune $(INSTROOT)/$(INSTBIN)
 	$(INSTALL) -m 0644 glastree.1 $(INSTROOT)/$(INSTMAN)/man1
