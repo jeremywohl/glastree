@@ -1,5 +1,5 @@
 0.51 alpha:
-20011127  File copies observe ownership/permissions
+20011128  File copies/mkdirs observe ownership/permissions
 20011126  Dates retreived from Date::Calc instead of /bin/date
 
 20011125  --genesis--

@@ -1,6 +1,5 @@
 Critical:
 '.' & '..' path segments
-Setting owner/perms
 Safety checks: is target some child (or parent?) of source?
 Build tests
 
