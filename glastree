@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.17 2002/02/11 21:55:15 jeremyw Exp $
+#  $Id: glastree,v 1.18 2002/02/20 05:41:02 jeremyw Exp $
 #
 
 require 5.002;
@@ -26,7 +26,7 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
-my $version = "glastree v0.55 beta, http://igmus.org/code\n";
+my $version = "glastree v0.56 beta, http://igmus.org/code\n";
 
 main ();
 
@@ -81,7 +81,6 @@ sub main
 
     die "fatal: $target or $source does not exist"                if not -e $target or not -e $source;
     die "fatal: $target or $source is not a directory"            if not -d $target or not -d $source;
-    die "fatal: $target/$today already exists"                    if     -e "$target/$today";
     die "fatal: you do not have read permission in $source"       if not -r $source;
     die "fatal: you do not have write permission in $target"      if not -w $target;
     die "fatal: you do not have write permission in $target/$ym"  if     -e "$target/$ym" and not -w "$target/$ym";
@@ -244,6 +243,7 @@ sub findyesterday ($target)
 
     return $yesterday;
 }
+
 
 sub cleanpath ($path)
 {
