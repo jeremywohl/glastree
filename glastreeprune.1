@@ -5,7 +5,7 @@
 .\"  Jeremy Wohl (http://igmus.org/code)
 .\"  Public domain; no warranty, no responsibility, etc.
 .\"
-.\"  $Id: glastreeprune.1,v 1.1 2002/02/06 01:14:28 jeremyw Exp $
+.\"  $Id: glastreeprune.1,v 1.2 2002/02/20 05:41:35 jeremyw Exp $
 .\"
 .TH glastreeprune 1 "February 2002" Unix "User Manuals"
 .SH NAME
@@ -19,7 +19,8 @@ backupdir
 .SH DESCRIPTION
 .PP
 Print date paths from a glastree backup directory, one per line, that are
-older than "days".
+older than
+.I days
 
 Combine with xargs & rm to effect a constant, sliding backup window.
 .SH EXAMPLE
@@ -30,7 +31,7 @@ Combine with xargs & rm to effect a constant, sliding backup window.
 .SH OPTIONS
 .PP
 .IP "--days=\fIn\fP"
-Keep only last n days (from today); default is 30
+Keep last n days (from today); default is 30
 .IP "--help"
 Display help message and exit
 .SH REPORTING BUGS

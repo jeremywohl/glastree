@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastreeprune,v 1.2 2002/02/06 01:14:04 jeremyw Exp $
+#  $Id: glastreeprune,v 1.3 2002/02/20 05:41:35 jeremyw Exp $
 #
 
 require 5.002;
@@ -42,8 +42,8 @@ sub main
     {
 	print STDERR "usage: glastreeprune [options] backupdir\n\n";
 	print STDERR "options:\n";
-	print STDERR "  --days=n             Keep only last n days (from today); default is 30\n";
-	#print STDERR "  --recentdays=n       Keep only most recent n days\n";
+	print STDERR "  --days=n             Keep last n days (from today); default is 30\n";
+	#print STDERR "  --backups=n          Keep last n backups\n";
 	print STDERR "  --help               Display this message and exit\n";
 	exit 1;
     }
