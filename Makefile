@@ -4,7 +4,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.5 2002/02/11 19:46:42 jeremyw Exp $
+#  $Id: Makefile,v 1.6 2002/02/20 05:38:13 jeremyw Exp $
 #
 
 INSTALL  = install
@@ -28,8 +28,9 @@ install:
 	if ($$@) { print "\nThis program requires the Date::Calc module.\n"; exit 1; } \
 	print " OK\n"; '
 
-	$(INSTALL) --directory $(INSTROOT)/$(INSTBIN) $(INSTROOT/($INSTMAN)
-	$(INSTALL) --preserve-timestamps --mode=0755 glastree $(INSTROOT)/$(INSTBIN)
-	$(INSTALL) --preserve-timestamps --mode=0755 glastreeprune $(INSTROOT)/$(INSTBIN)
-	$(INSTALL) --preserve-timestamps --mode=0644 glastree.1 $(INSTROOT)/$(INSTMAN)/man1
-	$(INSTALL) --preserve-timestamps --mode=0644 glastreeprune.1 $(INSTROOT)/$(INSTMAN)/man1
+	$(INSTALL) -d $(INSTROOT)/$(INSTBIN)
+	$(INSTALL) -d  $(INSTROOT/($INSTMAN)
+	$(INSTALL) -m 0755 glastree $(INSTROOT)/$(INSTBIN)
+	$(INSTALL) -m 0755 glastreeprune $(INSTROOT)/$(INSTBIN)
+	$(INSTALL) -m 0644 glastree.1 $(INSTROOT)/$(INSTMAN)/man1
+	$(INSTALL) -m 0644 glastreeprune.1 $(INSTROOT)/$(INSTMAN)/man1
