@@ -6,7 +6,7 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.8 2001/11/27 08:00:58 jeremyw Exp $
+#  $Id: glastree,v 1.9 2001/11/27 08:23:29 jeremyw Exp $
 #
 
 require 5.002;
@@ -76,8 +76,8 @@ sub recurse
     #   else: no logic to handle file type
     # end
 
-    rmkdir ("$target/$today/$cwd");
-
+    mkdirstat ("$target/$today/$cwd", stat $cwd);
+    
     foreach $file (@files)
     {
 	my $new_path       = "$cwd/$file";
@@ -88,12 +88,8 @@ sub recurse
 	    symlink (readlink ($new_path), $today_path);
 	}
 
-	elsif (-d $new_path) {
-	    rmkdir ($today_path);
-	    # set perms/ownership
-	}
-
-	elsif (-f $new_path) {
+	elsif (-f $new_path)
+	{
 	    my $new_stat       = stat $new_path;
 	    my $yesterday_stat = stat $yesterday_path;
 
@@ -101,13 +97,9 @@ sub recurse
 		or $new_stat->mtime != $yesterday_stat->mtime
 		or $new_stat->size  != $yesterday_stat->size)
 	    {
-		copy ($new_path, $today_path);
-		chown ($new_stat->uid, $new_stat->gid, $today_path) if $EUID == 0;
-		chmod ($new_stat->mode, $today_path);
-		utime ($new_stat->mtime, $new_stat->mtime, $today_path);
+		copystat ($new_path, $today_path, $new_stat);
 	    }
-	    else
-	    {
+	    else {
 		link ($yesterday_path, $today_path);
 	    }
 	}	    
@@ -118,6 +110,28 @@ sub recurse
     }
 
     foreach (@dirs) { recurse ("$cwd/$_"); }
+}
+
+
+sub mkdirstat ($path, $stat)
+{
+    my ($path, $stat) = @_;
+
+    mkdir $path, 0755;
+    chown ($stat->uid, $stat->gid, $path) if $EUID == 0;
+    chmod ($stat->mode, $path);
+    utime ($stat->mtime, $stat->mtime, $path);
+}
+
+
+sub copystat ($frompath, $topath, $stat)
+{
+    my ($frompath, $topath, $stat) = @_;
+
+    copy  ($frompath, $topath);
+    chown ($stat->uid, $stat->gid, $topath) if $EUID == 0;
+    chmod ($stat->mode, $topath);
+    utime ($stat->mtime, $stat->mtime, $topath);
 }
 
 
@@ -133,6 +147,6 @@ sub rmkdir ($path)
     foreach $piece (split '/', $path) {
 	next if $piece eq "";
 	$newdir .= "/" . $piece;
-	mkdir $newdir, 0755 if not -e $newdir;
+	mkdir $newdir, 0700 if not -e $newdir;
     }
 }
