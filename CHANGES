@@ -1,3 +1,6 @@
+0.57 gamma:
+2002.Jun.30  Added NUL line separation to glasstreeprune (thanks TK)
+
 0.56 beta:
 2002.Feb.19  No longer forbid multiple, same-day backups (thanks AG)
 2002.Feb.16  Modified install for non-GNU platforms (thanks JL)
