@@ -35,7 +35,7 @@ Examples
   at 4am, keeping last 35 days ::
 
     0 4 * * *  glastree Mail /backup/joe/Mail ; \
-               glasstreeprune --days=35 /backup/joe/Mail | xargs -- rm -fr
+               glastreeprune --days=35 /backup/joe/Mail | xargs -- rm -fr
 
   As root, backup /home; user trees will be self-owned ::
 
