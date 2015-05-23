@@ -1,8 +1,0 @@
-Allow prune to span directories, not days
-
-Reduce system calls
-Option to use YYYYMM/DD/HH/MM
-
-Long-term:
-Use delta logic hidden behind a real fs
-Consider problems with long-term WORM storage

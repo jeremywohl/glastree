@@ -6,7 +6,6 @@
 #  Jeremy Wohl (http://igmus.org/code)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: glastree,v 1.24 2003/01/27 00:26:26 jeremyw Exp $
 #
 
 require 5.002;
@@ -16,8 +15,8 @@ use Getopt::Long;
 use DirHandle;
 use File::Copy;
 use File::stat;
-use Cwd qw (getcwd);
-use Date::Calc qw (Today Add_Delta_Days);
+use Cwd qw(getcwd);
+use Date::Calc qw(Today Add_Delta_Days);
 use strict;
 
 # some globals & option vars
@@ -26,9 +25,9 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
 
-my $version = "glastree v1.03 stable, http://igmus.org/code/\n";
+my $version = "glastree v1.05 stable, http://igmus.org\n";
 
-main ();
+main();
 
 sub main
 {
@@ -36,41 +35,41 @@ sub main
     # handle options
     #
 
-    GetOptions ('today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
+    GetOptions('today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
     
     if ($opt_version)  { print STDERR $version; exit 1; }
 
     if ($opt_help or not defined @ARGV or scalar @ARGV != 2)
     {
-	print STDERR "usage: glastree [options] sourcedir backupdir\n\n";
-	print STDERR "options:\n";
-	#print STDERR "  --usehourminute      Use hour/minute in directory names, suppress per diem\n";
-	print STDERR "  --today=path         Use path instead of today's date (YYYYMM/DD)\n";
-	print STDERR "  --yesterday=path     Use path instead of yesterday's date (YYYYMM/DD)\n";
-	print STDERR "  --version            Display version and exit\n";
-	print STDERR "  --help               Display this message and exit\n";
-	exit 1;
+        print STDERR "usage: glastree [options] sourcedir backupdir\n\n";
+        print STDERR "options:\n";
+        #print STDERR "  --usehourminute      Use hour/minute in directory names, suppress per diem\n";
+        print STDERR "  --today=path         Use path instead of today's date (YYYYMM/DD)\n";
+        print STDERR "  --yesterday=path     Use path instead of yesterday's date (YYYYMM/DD)\n";
+        print STDERR "  --version            Display version and exit\n";
+        print STDERR "  --help               Display this message and exit\n";
+        exit 1;
     }
 
     $source = $ARGV [0];
     $target = $ARGV [1];
 
     if (not defined $opt_today) {
-	$today = sprintf "%4d%02d/%02d", Today ();
+        $today = sprintf "%4d%02d/%02d", Today();
     } else {
-	$today = $opt_today;
+        $today = $opt_today;
 
-	die "fatal: manually set 'today' parameter is not valid YYYYMM/DD"
-	    if $today !~ m!^\d{6}/\d\d$!;
+        die "fatal: manually set 'today' parameter is not valid YYYYMM/DD"
+            if $today !~ m!^\d{6}/\d\d$!;
     }
 
     if (not defined $opt_yesterday) {
-	$yesterday = findyesterday ($target);
+        $yesterday = findyesterday($target);
     } else {
-	$yesterday = $opt_yesterday;
+        $yesterday = $opt_yesterday;
 
-	die "fatal: manually set 'yesterday' parameter is not valid YYYYMM/DD"
-	    if $yesterday !~ m!^\d{6}/\d\d$!;
+        die "fatal: manually set 'yesterday' parameter is not valid YYYYMM/DD"
+            if $yesterday !~ m!^\d{6}/\d\d$!;
     }
 
     #
@@ -90,9 +89,9 @@ sub main
     # get to it
     #
 
-    rmkdir (cleanpath ("$target/$today"));
+    rmkdir(cleanpath("$target/$today"));
 
-    recurse ($source);
+    recurse($source);
 }
 
 
@@ -104,9 +103,9 @@ sub recurse
     my ($now_stat, $yes_stat);
 
 
-    mkdirstat ("$target/$today", $cwd);
+    mkdirstat("$target/$today", $cwd);
     
-    return if ($dir = new DirHandle ($cwd)) == undef;
+    return if ($dir = new DirHandle($cwd)) == undef;
 
     @list  = $dir->read;
     @dirs  = grep { -d "$cwd/$_" and not -l "$cwd/$_" and $_ ne '.' and $_ ne '..' } @list;
@@ -124,36 +123,36 @@ sub recurse
 
     foreach $file (@files)
     {
-	my $new_path       = "$cwd/$file";
-	my $today_path     = "$target/$today/$cwd/$file";
-	my $yesterday_path = "$target/$yesterday/$cwd/$file";
+        my $new_path       = "$cwd/$file";
+        my $today_path     = "$target/$today/$cwd/$file";
+        my $yesterday_path = "$target/$yesterday/$cwd/$file";
 
-	if (-l $new_path) {
-	    symlink (readlink ($new_path), $today_path);
-	}
+        if (-l $new_path) {
+            symlink(readlink($new_path), $today_path);
+        }
 
-	elsif (-f $new_path)
-	{
-	    my $new_stat       = stat $new_path;
-	    my $yesterday_stat = stat $yesterday_path;
+        elsif (-f $new_path)
+        {
+            my $new_stat       = stat $new_path;
+            my $yesterday_stat = stat $yesterday_path;
 
-	    if (not defined ($yesterday_stat)
-		or $new_stat->mtime != $yesterday_stat->mtime
-		or $new_stat->size  != $yesterday_stat->size)
-	    {
-		copystat ($new_path, $today_path, $new_stat);
-	    }
-	    else {
-		link ($yesterday_path, $today_path);
-	    }
-	}	    
+            if (not defined($yesterday_stat)
+                or $new_stat->mtime != $yesterday_stat->mtime
+                or $new_stat->size  != $yesterday_stat->size)
+            {
+                copystat($new_path, $today_path, $new_stat);
+            }
+            else {
+                link($yesterday_path, $today_path);
+            }
+        }	    
 
-	else {
-	    print STDERR "warning: no logic to handle $cwd/$file; skipping\n";
-	}
+        else {
+            print STDERR "warning: no logic to handle $cwd/$file; skipping\n";
+        }
     }
 
-    foreach (@dirs) { recurse ("$cwd/$_"); }
+    foreach (@dirs) { recurse("$cwd/$_"); }
 }
 
 
@@ -161,26 +160,26 @@ sub recurse
 # Make path (recursively, if necessary) $prefix/$path, with $path owner/perms/mtime
 #  if $path == undef, we set perms as user-only
 #
-sub mkdirstat ($prefix, $path)
+sub mkdirstat
 {
     my ($prefix, $path) = @_;
     my ($piece, $olddir, $newdir, $fulldir, $stat);
 
     foreach $piece (split '/', $path)
     {
-	$olddir .= ($piece eq "" ? "/" : "") . $piece . "/";
-	$newdir .= $piece . "/";
-	$fulldir = "$prefix/$newdir";
+        $olddir .= ($piece eq "" ? "/" : "") . $piece . "/";
+        $newdir .= $piece . "/";
+        $fulldir = "$prefix/$newdir";
 
-	if (not -e $fulldir)
-	{
-	    $stat = stat $olddir;
+        if (not -e $fulldir)
+        {
+            $stat = stat $olddir;
 
-	    mkdir $fulldir, 0555;
-	    chown ($stat->uid, $stat->gid, $fulldir) if $EUID == 0;
-	    chmod ($stat->mode, $fulldir);
-	    utime ($stat->mtime, $stat->mtime, $fulldir);
-	}
+            mkdir $fulldir, 0555;
+            chown($stat->uid, $stat->gid, $fulldir) if $EUID == 0;
+            chmod($stat->mode, $fulldir);
+            utime($stat->mtime, $stat->mtime, $fulldir);
+        }
     }
 }
 
@@ -189,14 +188,14 @@ sub mkdirstat ($prefix, $path)
 # Copy $frompath to $topath, with $stat owner/perms/mtime
 #
 #
-sub copystat ($frompath, $topath, $stat)
+sub copystat
 {
     my ($frompath, $topath, $stat) = @_;
 
-    copy  ($frompath, $topath);
-    chown ($stat->uid, $stat->gid, $topath) if $EUID == 0;
-    chmod ($stat->mode, $topath);
-    utime ($stat->mtime, $stat->mtime, $topath);
+    copy($frompath, $topath);
+    chown($stat->uid, $stat->gid, $topath) if $EUID == 0;
+    chmod($stat->mode, $topath);
+    utime($stat->mtime, $stat->mtime, $topath);
 }
 
 
@@ -204,7 +203,7 @@ sub copystat ($frompath, $topath, $stat)
 # Make all segments of $path that do not exist
 #
 #
-sub rmkdir ($path)
+sub rmkdir
 {
     my ($path) = shift;
     my ($piece, $newdir);
@@ -212,9 +211,9 @@ sub rmkdir ($path)
     $newdir = "/" if $path =~ m!^/!;
 
     foreach $piece (split '/', $path) {
-	next if $piece eq "";
-	$newdir .= $piece . "/";
-	mkdir $newdir, 0755 if not -e $newdir;
+        next if $piece eq "";
+        $newdir .= $piece . "/";
+        mkdir $newdir, 0755 if not -e $newdir;
     }
 }
 
@@ -223,29 +222,30 @@ sub rmkdir ($path)
 # Match most recent backup directory in the past sixty days, or yesterday if none
 #
 #
-sub findyesterday ($target)
+sub findyesterday
 {
+    my ($target) = shift;
     my ($yesterday, $span, $testdir);
 
 
     $span = 1;
 
-    $yesterday = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -1);
+    $yesterday = sprintf "%4d%02d/%02d", Add_Delta_Days(Today(), -1);
 
     while ($span < 60)
     {
-	$testdir = sprintf "%4d%02d/%02d", Add_Delta_Days (Today (), -$span);
+        $testdir = sprintf "%4d%02d/%02d", Add_Delta_Days(Today(), -$span);
 
-	if (-d "$target/$testdir")  { $yesterday = $testdir;  last; }
+        if (-d "$target/$testdir")  { $yesterday = $testdir;  last; }
 
-	$span++;
+        $span++;
     }
 
     return $yesterday;
 }
 
 
-sub cleanpath ($path)
+sub cleanpath
 {
     my ($path) = shift;
 

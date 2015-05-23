@@ -1,10 +1,9 @@
 #
 # Makefile
 #
-#  Jeremy Wohl (http://igmus.org/code)
+#  Jeremy Wohl (http://igmus.org)
 #  Public domain; no warranty, no responsibility, etc.
 #
-#  $Id: Makefile,v 1.7 2002/02/20 05:43:20 jeremyw Exp $
 #
 
 INSTALL  = install
