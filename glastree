@@ -8,7 +8,7 @@
 #
 #
 
-require 5.002;
+require 5.004;
 
 use English;
 use Getopt::Long;
@@ -39,7 +39,7 @@ sub main
     
     if ($opt_version)  { print STDERR $version; exit 1; }
 
-    if ($opt_help or not defined @ARGV or scalar @ARGV != 2)
+    if ($opt_help or not @ARGV or scalar @ARGV != 2)
     {
         print STDERR "usage: glastree [options] sourcedir backupdir\n\n";
         print STDERR "options:\n";

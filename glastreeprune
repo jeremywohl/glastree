@@ -8,7 +8,7 @@
 #
 #
 
-require 5.002;
+require 5.004;
 
 use English;
 use Getopt::Long;
@@ -38,7 +38,7 @@ sub main
 
     GetOptions('days=i', 'print0', 'help');
     
-    if ($opt_help or not defined @ARGV or scalar @ARGV != 1)
+    if ($opt_help or not @ARGV or scalar @ARGV != 1)
     {
         print STDERR "usage: glastreeprune [options] backupdir\n\n";
         print STDERR "options:\n";
